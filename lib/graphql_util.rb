@@ -28,7 +28,7 @@ module GraphqlUtil
 
     base.const_set('GRAPHQL_UTIL_GRAPHQL_ENDPOINT', endpoint)
     base.const_set('GRAPHQL_UTIL_GRAPHQL_PATH', path)
-    base.const_set('GRAPHQL_UTIL_GRAPHQL_TOKEN', token)
+    # base.const_set('GRAPHQL_UTIL_GRAPHQL_TOKEN', token)
     base.extend GraphqlMethods
 
     base_client = base.client
