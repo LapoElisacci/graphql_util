@@ -21,10 +21,10 @@ module GraphqlUtil
   #
   # @return [Boolean] true
   #
-  def self.act_as_graphql_client(base, endpoint:, path:, token: PulsarAuthUtil.config.auth_token)
-    raise 'PulsarAuthUtil::Graphql - Contant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
-    raise 'PulsarAuthUtil::Graphql - Contant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
-    raise 'PulsarAuthUtil::Graphql - Contant GRAPHQL_UTIL_GRAPHQL_TOKEN is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_TOKEN)
+  def self.act_as_graphql_client(base, endpoint:, path:)
+    raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
+    raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
+    raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_TOKEN is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_TOKEN)
 
     base.const_set('GRAPHQL_UTIL_GRAPHQL_ENDPOINT', endpoint)
     base.const_set('GRAPHQL_UTIL_GRAPHQL_PATH', path)
@@ -33,7 +33,7 @@ module GraphqlUtil
 
     base_client = base.client
     Dir.children("#{path}/queries").each do |query|
-      raise "PulsarAuthUtil::Graphql error - Invalid file #{query} found! Expected file extension to be .graphql" unless query.match(/.graphql/)
+      raise "GraphqlUtil error - Invalid file #{query} found! Expected file extension to be .graphql" unless query.match(/.graphql/)
       const_name = query.gsub('.graphql', '')
       begin
         base.const_set(const_name.upcase, base_client.parse(File.open("#{path}/queries/#{query}").read))
@@ -41,7 +41,7 @@ module GraphqlUtil
           base.query(base.const_get(const_name.upcase.to_sym), **params)
         end
       rescue StandardError => e
-        message = "PulsarAuthUtil::Graphql error - Could not define query method '#{const_name.downcase}' because of an error (#{e.message})."
+        message = "GraphqlUtil error - Could not define query method '#{const_name.downcase}' because of an error (#{e.message})."
         puts message
         LoggerUtil.logger.error(msg: message, e: e)
       end
@@ -53,19 +53,19 @@ module GraphqlUtil
     #
     # Returns the GraphQL client instance which can be used to perform GraphQL queries
     #
-    # @return [PulsarAuthUtil::Graphql::Client] Client instance
+    # @return [GraphqlUtil::Client] Client instance
     #
     def client
-      PulsarAuthUtil::Graphql::Client.new(schema: schema.load_schema, execute: http)
+      GraphqlUtil::Client.new(schema: schema.load_schema, execute: http)
     end
 
     #
     # Returns the HTTP Client instance based on the desired GraphQL API endpoint, required by the Client to perform requests
     #
-    # @return [PulsarAuthUtil::Graphql::Http] Required HTTP Client
+    # @return [GraphqlUtil::Http] Required HTTP Client
     #
     def http
-      PulsarAuthUtil::Graphql::Http.new(self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, self::GRAPHQL_UTIL_GRAPHQL_TOKEN)
+      GraphqlUtil::Http.new(self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, self::GRAPHQL_UTIL_GRAPHQL_TOKEN)
     end
 
     #
@@ -83,10 +83,10 @@ module GraphqlUtil
     #
     # Returns the GraphQL Schema instance, required by the GraphQL Client to perform Queries / Mutations
     #
-    # @return [PulsarAuthUtil::Graphql::Schema] Schema instance
+    # @return [GraphqlUtil::Schema] Schema instance
     #
     def schema
-      PulsarAuthUtil::Graphql::Schema.new(http, path: "#{self::GRAPHQL_UTIL_GRAPHQL_PATH}/schema.json")
+      GraphqlUtil::Schema.new(http, path: "#{self::GRAPHQL_UTIL_GRAPHQL_PATH}/schema.json")
     end
   end
 end
