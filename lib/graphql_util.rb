@@ -38,7 +38,7 @@ module GraphqlUtil
       begin
         base.const_set(const_name.upcase, base_client.parse(File.open("#{path}/queries/#{query}").read))
         base.define_singleton_method(const_name.downcase.to_sym) do |params|
-          base.query(base.const_get(const_name.upcase.to_sym), **params)
+          base.query(base.const_get(const_name.upcase.to_sym), params)
         end
       rescue StandardError => e
         message = "GraphqlUtil error - Could not define query method '#{const_name.downcase}' because of an error (#{e.message})."
