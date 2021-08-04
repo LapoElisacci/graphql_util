@@ -42,8 +42,8 @@ module GraphqlUtil
         end
       rescue StandardError => e
         message = "GraphqlUtil error - Could not define query method '#{const_name.downcase}' because of an error (#{e.message})."
-        puts message
         LoggerUtil.logger.error(msg: message, e: e)
+        raise e
       end
     end
     true
