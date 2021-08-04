@@ -13,6 +13,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    byebug (11.1.3)
     concurrent-ruby (1.1.9)
     diff-lcs (1.4.4)
     graphql (1.12.14)
@@ -44,6 +45,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   graphql_util!
   rake (~> 12.0)
   rspec (~> 3.0)

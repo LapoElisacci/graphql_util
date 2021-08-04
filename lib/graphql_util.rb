@@ -35,15 +35,9 @@ module GraphqlUtil
     Dir.children("#{path}/queries").each do |query|
       raise "GraphqlUtil error - Invalid file #{query} found! Expected file extension to be .graphql" unless query.match(/.graphql/)
       const_name = query.gsub('.graphql', '')
-      begin
-        base.const_set(const_name.upcase, base_client.parse(File.open("#{path}/queries/#{query}").read))
-        base.define_singleton_method(const_name.downcase.to_sym) do |params|
-          base.query(base.const_get(const_name.upcase.to_sym), params)
-        end
-      rescue StandardError => e
-        message = "GraphqlUtil error - Could not define query method '#{const_name.downcase}' because of an error (#{e.message})."
-        LoggerUtil.logger.error(msg: message, e: e)
-        raise e
+      base.const_set(const_name.upcase, base_client.parse(File.open("#{path}/queries/#{query}").read))
+      base.define_singleton_method(const_name.downcase.to_sym) do |variables = {}, context = {}|
+        base.query(base.const_get(const_name.upcase.to_sym), variables: variables, context: context)
       end
     end
     true
