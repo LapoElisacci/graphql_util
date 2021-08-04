@@ -2,8 +2,4 @@
 
 require 'graphql/client/http'
 
-module PulsarAuthUtil
-  module Graphql
-    class Http < GraphQL::Client::HTTP; end
-  end
-end
+class GraphqlUtil::Http < GraphQL::Client::HTTP; end

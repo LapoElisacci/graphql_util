@@ -21,14 +21,14 @@ module GraphqlUtil
   #
   # @return [Boolean] true
   #
-  def self.act_as_graphql_client(base, endpoint:, path:)
+  def self.act_as_graphql_client(base, endpoint:, path:, token: nil)
     raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
     raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
     raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_TOKEN is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_TOKEN)
 
     base.const_set('GRAPHQL_UTIL_GRAPHQL_ENDPOINT', endpoint)
     base.const_set('GRAPHQL_UTIL_GRAPHQL_PATH', path)
-    # base.const_set('GRAPHQL_UTIL_GRAPHQL_TOKEN', token)
+    base.const_set('GRAPHQL_UTIL_GRAPHQL_TOKEN', token) if token
     base.extend GraphqlMethods
 
     base_client = base.client

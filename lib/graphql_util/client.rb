@@ -2,6 +2,4 @@
 
 require 'graphql/client'
 
-module GraphqlUtil
-  class Client < GraphQL::Client; end
-end
+class GraphqlUtil::Client < GraphQL::Client; end
