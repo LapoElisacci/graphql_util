@@ -81,6 +81,8 @@ Each method will accept arguments as GraphQL variables.
   result = MyClient.user_info(username: 'LapoElisacci' )
 ```
 
+You can find more details about the `graphql-client` [here](https://github.com/github/graphql-client)
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rspec spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
