@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.spacex.land/graphql
+    body:
+      encoding: UTF-8
+      string: '{"query":"query TestClient__LAUNCHES_PAST($limit: Int!) {\n  launchesPast(limit:
+        $limit) {\n    mission_name\n    launch_date_local\n    launch_site {\n      site_name_long\n    }\n  }\n}","variables":{"limit":2},"operationName":"TestClient__LAUNCHES_PAST"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Cowboy
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - Express
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '386'
+      Etag:
+      - W/"182-rQM5UPLwxubBOQ+0O0eUyEBhIN8"
+      Date:
+      - Mon, 25 Oct 2021 12:40:46 GMT
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: UTF-8
+      string: '{"data":{"launchesPast":[{"mission_name":"Starlink-15 (v1.0)","launch_date_local":"2020-10-24T11:31:00-04:00","launch_site":{"site_name_long":"Cape
+        Canaveral Air Force Station Space Launch Complex 40"}},{"mission_name":"Sentinel-6
+        Michael Freilich","launch_date_local":"2020-11-21T09:17:00-08:00","launch_site":{"site_name_long":"Vandenberg
+        Air Force Base Space Launch Complex 4E"}}]}}
+
+'
+  recorded_at: Mon, 25 Oct 2021 12:40:46 GMT
+recorded_with: VCR 6.0.0

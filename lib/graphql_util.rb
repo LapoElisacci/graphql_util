@@ -35,8 +35,8 @@ module GraphqlUtil
       raise "GraphqlUtil error - Invalid file #{query} found! Expected file extension to be .graphql" unless query.match(/.graphql/)
       const_name = query.gsub('.graphql', '')
       base.const_set(const_name.upcase, base_client.parse(File.open("#{path}/queries/#{query}").read))
-      base.define_singleton_method(const_name.downcase.to_sym) do |variables = {}, context = {}|
-        base.query(base.const_get(const_name.upcase.to_sym), variables: variables, context: context)
+      base.define_singleton_method(const_name.downcase.to_sym) do |variables = {}|
+        base.query(base.const_get(const_name.upcase.to_sym), variables: variables)
       end
     end
     true
@@ -71,8 +71,8 @@ module GraphqlUtil
     #
     # @return [Monad] Succes(:data) / Failure(:messages, :problems)
     #
-    def query(query, variables: {}, context: {})
-      client.query(query, variables: variables, context: context)
+    def query(query, variables: {})
+      client.query(query, variables: variables)
     end
 
     #

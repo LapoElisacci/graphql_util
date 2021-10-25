@@ -12,7 +12,7 @@ class GraphqlUtil::Client < GraphQL::Client
   #
   # @return [Monad] Succes(:data) / Failure(Exceptions::GraphqlError)
   #
-  def query(parsed_query, variables: {}, context: {})
-    super(parsed_query, variables: variables, context: context)
+  def query(parsed_query, variables: {})
+    super(parsed_query, variables: variables, context: {})
   end
 end

@@ -73,15 +73,12 @@ Where `my_client.rb` is the GraphQL Client class defined as above, `schema.json`
 Now that we've defined our first GraphQL query, the Client will automagically implement a method to perform such operation.
 The method name will be the same as the filename, so if our file's named `user_info.graphql` the relative method will be `user_info`.
 
-Each method accept two optional arguments:
-
-1. `variables` - A Hash of variables to be passed to the GraphQL Operation
-2. `context` - A Hash for context params.
+Each method will accept arguments as GraphQL variables.
 
 ### Example
 
 ```Ruby
-  result = MyClient.user_info(variables: { username: 'LapoElisacci' })
+  result = MyClient.user_info(username: 'LapoElisacci' )
 ```
 
 ## Development

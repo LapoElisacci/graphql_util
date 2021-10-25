@@ -10,7 +10,7 @@ class GraphqlUtil::Http < GraphQL::Client::HTTP
   # @param [String] endpoint GraphQL API Endpoint
   # @param [Hash] headers HTTP Request headers
   #
-  def initialize(endpoint:, headers:)
+  def initialize(endpoint:, headers: {})
     @headers = headers
     super(endpoint) do
       def headers(context)
