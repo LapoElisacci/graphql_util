@@ -1,3 +1,6 @@
+![logo](https://user-images.githubusercontent.com/50866745/138700181-01b54097-b19c-4655-b032-237c1a77a1fb.png)
+
+![](https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white)
 # GraphQL Util
 
 The gem wraps the Ruby [graphql-client](https://github.com/github/graphql-client) gem, to dinamically define GraphQL Clients.
