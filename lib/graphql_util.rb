@@ -21,14 +21,16 @@ module GraphqlUtil
   #
   # @return [Boolean] true
   #
-  def self.act_as_graphql_client(base, endpoint:, path:, token: nil)
-    raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
-    raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
-    raise 'GraphqlUtil - Contant GRAPHQL_UTIL_GRAPHQL_TOKEN is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_TOKEN)
+  def self.act_as_graphql_client(base, endpoint:, path:, token: nil, user_agent: nil)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_TOKEN is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_TOKEN)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_USER_AGENT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_USER_AGENT)
 
     base.const_set('GRAPHQL_UTIL_GRAPHQL_ENDPOINT', endpoint)
     base.const_set('GRAPHQL_UTIL_GRAPHQL_PATH', path)
     base.const_set('GRAPHQL_UTIL_GRAPHQL_TOKEN', token)
+    base.const_set('GRAPHQL_UTIL_GRAPHQL_USER_AGENT', user_agent)
     base.extend GraphqlMethods
 
     base_client = base.client
@@ -59,7 +61,7 @@ module GraphqlUtil
     # @return [GraphqlUtil::Http] Required HTTP Client
     #
     def http
-      GraphqlUtil::Http.new(self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, self::GRAPHQL_UTIL_GRAPHQL_TOKEN)
+      GraphqlUtil::Http.new(endpoint: self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, token: self::GRAPHQL_UTIL_GRAPHQL_TOKEN, user_agent: self::GRAPHQL_UTIL_GRAPHQL_USER_AGENT)
     end
 
     #

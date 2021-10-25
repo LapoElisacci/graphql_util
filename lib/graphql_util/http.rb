@@ -10,11 +10,15 @@ class GraphqlUtil::Http < GraphQL::Client::HTTP
   # @param [String] endpoint GraphQL API Endpoint
   # @param [String] token GraphQL API Authentication Token
   #
-  def initialize(endpoint, token)
+  def initialize(endpoint:, token:, user_agent:)
     @token = token
+    @user_agent = user_agent
     super(endpoint) do
       def headers(context)
-        @token.present? ? { 'Authorization' => "Bearer #{@token}" } : {}
+        {
+          'Authorization' => "Bearer #{@token}",
+          'User-Agent' => @user_agent
+        }
       end
     end
   end
