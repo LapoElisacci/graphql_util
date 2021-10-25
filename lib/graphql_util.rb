@@ -6,8 +6,6 @@ require 'graphql_util/http'
 require 'graphql_util/schema'
 
 module GraphqlUtil
-  class Error < StandardError; end
-
   #
   # Allows a Ruby class to behave like a GraphQL Client by extending it with the required methods and constants to perform GraphQL Queries / Mutations.
   #
@@ -18,19 +16,18 @@ module GraphqlUtil
   # @param [Class] base Class
   # @param [String] endpoint GraphQL API Endpoint
   # @param [String] path GraphQL Schema / Queries definitions path
+  # @param [Hash] headers HTTP Request Headers
   #
   # @return [Boolean] true
   #
-  def self.act_as_graphql_client(base, endpoint:, path:, token: nil, user_agent: nil)
+  def self.act_as_graphql_client(base, endpoint:, path:, headers: {})
     raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
     raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
-    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_TOKEN is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_TOKEN)
-    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_USER_AGENT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_USER_AGENT)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_HEADERS is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_HEADERS)
 
     base.const_set('GRAPHQL_UTIL_GRAPHQL_ENDPOINT', endpoint)
     base.const_set('GRAPHQL_UTIL_GRAPHQL_PATH', path)
-    base.const_set('GRAPHQL_UTIL_GRAPHQL_TOKEN', token)
-    base.const_set('GRAPHQL_UTIL_GRAPHQL_USER_AGENT', user_agent)
+    base.const_set('GRAPHQL_UTIL_GRAPHQL_HEADERS', headers)
     base.extend GraphqlMethods
 
     base_client = base.client
@@ -46,6 +43,8 @@ module GraphqlUtil
   end
 
   module GraphqlMethods
+    SCHEMA_FILENAME = 'schema.json'.freeze
+
     #
     # Returns the GraphQL client instance which can be used to perform GraphQL queries
     #
@@ -61,7 +60,7 @@ module GraphqlUtil
     # @return [GraphqlUtil::Http] Required HTTP Client
     #
     def http
-      GraphqlUtil::Http.new(endpoint: self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, token: self::GRAPHQL_UTIL_GRAPHQL_TOKEN, user_agent: self::GRAPHQL_UTIL_GRAPHQL_USER_AGENT)
+      GraphqlUtil::Http.new(endpoint: self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, headers: self::GRAPHQL_UTIL_GRAPHQL_HEADERS)
     end
 
     #
@@ -82,7 +81,7 @@ module GraphqlUtil
     # @return [GraphqlUtil::Schema] Schema instance
     #
     def schema
-      GraphqlUtil::Schema.new(http, path: "#{self::GRAPHQL_UTIL_GRAPHQL_PATH}/schema.json")
+      GraphqlUtil::Schema.new(http, path: "#{self::GRAPHQL_UTIL_GRAPHQL_PATH}/#{SCHEMA_FILENAME}")
     end
   end
 end

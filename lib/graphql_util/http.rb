@@ -8,17 +8,13 @@ class GraphqlUtil::Http < GraphQL::Client::HTTP
   # Returns the GraphQL::Client::HTTP instance injecting the PulsarAuthUtil authentication Token
   #
   # @param [String] endpoint GraphQL API Endpoint
-  # @param [String] token GraphQL API Authentication Token
+  # @param [Hash] headers HTTP Request headers
   #
-  def initialize(endpoint:, token:, user_agent:)
-    @token = token
-    @user_agent = user_agent
+  def initialize(endpoint:, headers:)
+    @headers = headers
     super(endpoint) do
       def headers(context)
-        {
-          'Authorization' => "Bearer #{@token}",
-          'User-Agent' => @user_agent
-        }
+        @headers
       end
     end
   end
