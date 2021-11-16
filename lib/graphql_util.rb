@@ -21,48 +21,30 @@ module GraphqlUtil
   # @return [Boolean] true
   #
   def self.act_as_graphql_client(base, endpoint:, path:, headers: {})
-    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_ENDPOINT is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_ENDPOINT)
-    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_PATH is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_PATH)
-    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_GRAPHQL_HEADERS is already defined' if defined?(base::GRAPHQL_UTIL_GRAPHQL_HEADERS)
+    raise 'GraphqlUtil - Constant HTTP is already defined' if defined?(base::HTTP)
+    raise 'GraphqlUtil - Constant SCHEMA is already defined' if defined?(base::SCHEMA)
+    raise 'GraphqlUtil - Constant CLIENT is already defined' if defined?(base::CLIENT)
+    raise 'GraphqlUtil - Constant GRAPHQL_SCHEMA_DUMP is already defined' if defined?(base::GRAPHQL_SCHEMA_DUMP)
 
-    base.const_set('GRAPHQL_UTIL_GRAPHQL_ENDPOINT', endpoint)
-    base.const_set('GRAPHQL_UTIL_GRAPHQL_PATH', path)
-    base.const_set('GRAPHQL_UTIL_GRAPHQL_HEADERS', headers)
-    base.extend GraphqlMethods
+    base.const_set('GRAPHQL_SCHEMA_DUMP', "#{path}/schema.json")
+    base.const_set('HTTP', GraphqlUtil::Http.new(endpoint: endpoint, headers: headers))
+    base.const_set('SCHEMA', GraphqlUtil::Schema.new(base::HTTP, path: base::GRAPHQL_SCHEMA_DUMP))
+    base.const_set('CLIENT', GraphqlUtil::Client.new(schema: base::SCHEMA.load_schema, execute: base::HTTP))
+    base.extend GraphqlUtilMethods
 
-    base_client = base.client
-    Dir.children("#{path}/queries").each do |query|
-      raise "GraphqlUtil error - Invalid file #{query} found! Expected file extension to be .graphql" unless query.match(/.graphql/)
-      const_name = query.gsub('.graphql', '')
-      base.const_set(const_name.upcase, base_client.parse(File.open("#{path}/queries/#{query}").read))
+    Dir["#{path}/**/*.graphql"].each do |filename|
+      const_name = filename.split('/').last.gsub('.graphql', '')
+
+      base.const_set(const_name.upcase, base::CLIENT.parse(File.open(filename).read))
       base.define_singleton_method(const_name.downcase.to_sym) do |variables = {}|
         base.query(base.const_get(const_name.upcase.to_sym), variables: variables)
       end
     end
+
     true
   end
 
-  module GraphqlMethods
-    SCHEMA_FILENAME = 'schema.json'.freeze
-
-    #
-    # Returns the GraphQL client instance which can be used to perform GraphQL queries
-    #
-    # @return [GraphqlUtil::Client] Client instance
-    #
-    def client
-      GraphqlUtil::Client.new(schema: schema.load_schema, execute: http)
-    end
-
-    #
-    # Returns the HTTP Client instance based on the desired GraphQL API endpoint, required by the Client to perform requests
-    #
-    # @return [GraphqlUtil::Http] Required HTTP Client
-    #
-    def http
-      GraphqlUtil::Http.new(endpoint: self::GRAPHQL_UTIL_GRAPHQL_ENDPOINT, headers: self::GRAPHQL_UTIL_GRAPHQL_HEADERS)
-    end
-
+  module GraphqlUtilMethods
     #
     # Calls the Client query method to perform the passed GraphQL Query / Mutation request with variables
     #
@@ -72,16 +54,7 @@ module GraphqlUtil
     # @return [Monad] Succes(:data) / Failure(:messages, :problems)
     #
     def query(query, variables: {})
-      client.query(query, variables: variables)
-    end
-
-    #
-    # Returns the GraphQL Schema instance, required by the GraphQL Client to perform Queries / Mutations
-    #
-    # @return [GraphqlUtil::Schema] Schema instance
-    #
-    def schema
-      GraphqlUtil::Schema.new(http, path: "#{self::GRAPHQL_UTIL_GRAPHQL_PATH}/#{SCHEMA_FILENAME}")
+      self::CLIENT.query(query, variables: variables)
     end
   end
 end
