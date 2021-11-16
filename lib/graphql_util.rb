@@ -34,6 +34,7 @@ module GraphqlUtil
 
     Dir["#{path}/**/*.graphql"].each do |filename|
       const_name = filename.split('/').last.gsub('.graphql', '')
+      raise "GraphqlUtil - #{const_name} is already defined, please use a different filename." if defined?(base.const_get(const_name.upcase.to_sym))
 
       base.const_set(const_name.upcase, base::CLIENT.parse(File.open(filename).read))
       base.define_singleton_method(const_name.downcase.to_sym) do |variables = {}|
