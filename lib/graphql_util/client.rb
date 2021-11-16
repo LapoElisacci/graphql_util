@@ -8,9 +8,8 @@ class GraphqlUtil::Client < GraphQL::Client
   #
   # @param [String] parsed_query GraphQL parsed query
   # @param [Hash] variables GraphQL query params
-  # @param [Hash] context GraphQL query context
   #
-  # @return [Monad] Succes(:data) / Failure(Exceptions::GraphqlError)
+  # @return [GraphQL::Client::Response] Request Response
   #
   def query(parsed_query, variables: {})
     super(parsed_query, variables: variables, context: {})

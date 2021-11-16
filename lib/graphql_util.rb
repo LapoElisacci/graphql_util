@@ -11,7 +11,7 @@ module GraphqlUtil
   #
   # * Extends the class with the required methods and constants to perform GraphQL Queries / Mutations
   # * Dumps the GraphQL Schema into the passed folder
-  # * Dynamically defines constants and methods to perform the queries defined as .graphql files under /queries folder under the passed path
+  # * Dynamically defines constants and methods to perform the queries defined as .graphql files under under the passed path subdirectories
   #
   # @param [Class] base Class
   # @param [String] endpoint GraphQL API Endpoint
@@ -49,10 +49,10 @@ module GraphqlUtil
     #
     # Calls the Client query method to perform the passed GraphQL Query / Mutation request with variables
     #
-    # @param [ParsedQuery] query GraphQL Parsed Query/Mutation
+    # @param [GraphQL::Client::OperationDefinition] query GraphQL Operation
     # @param [Hash] variables Variables to be passed to the GraphQL Query / Mutation
     #
-    # @return [Monad] Succes(:data) / Failure(:messages, :problems)
+    # @return [GraphQL::Client::Response] Request Response
     #
     def query(query, variables: {})
       self::GRAPHQL_UTIL_CLIENT.query(query, variables: variables)
