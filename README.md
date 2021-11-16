@@ -140,7 +140,7 @@ Something like `anywhere/anything/whatever/whatever.graphql` won't produce the r
   └── schema.json
 ```
 
-You can find more details about the `graphql-client` [here](https://github.com/github/graphql-client)
+You can find more details about the `graphql-client` [here](https://github.com/github/graphql-client).
 
 ## Development
 
