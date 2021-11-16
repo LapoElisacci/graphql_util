@@ -21,22 +21,22 @@ module GraphqlUtil
   # @return [Boolean] true
   #
   def self.act_as_graphql_client(base, endpoint:, path:, headers: {})
-    raise 'GraphqlUtil - Constant HTTP is already defined' if defined?(base::HTTP)
-    raise 'GraphqlUtil - Constant SCHEMA is already defined' if defined?(base::SCHEMA)
-    raise 'GraphqlUtil - Constant CLIENT is already defined' if defined?(base::CLIENT)
-    raise 'GraphqlUtil - Constant GRAPHQL_SCHEMA_DUMP is already defined' if defined?(base::GRAPHQL_SCHEMA_DUMP)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_HTTP is already defined' if defined?(base::GRAPHQL_UTIL_HTTP)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_SCHEMA is already defined' if defined?(base::GRAPHQL_UTIL_SCHEMA)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_CLIENT is already defined' if defined?(base::GRAPHQL_UTIL_CLIENT)
+    raise 'GraphqlUtil - Constant GRAPHQL_UTIL_SCHEMA_DUMP is already defined' if defined?(base::GRAPHQL_UTIL_SCHEMA_DUMP)
 
-    base.const_set('GRAPHQL_SCHEMA_DUMP', "#{path}/schema.json")
-    base.const_set('HTTP', GraphqlUtil::Http.new(endpoint: endpoint, headers: headers))
-    base.const_set('SCHEMA', GraphqlUtil::Schema.new(base::HTTP, path: base::GRAPHQL_SCHEMA_DUMP))
-    base.const_set('CLIENT', GraphqlUtil::Client.new(schema: base::SCHEMA.load_schema, execute: base::HTTP))
+    base.const_set('GRAPHQL_UTIL_SCHEMA_DUMP', "#{path}/schema.json")
+    base.const_set('GRAPHQL_UTIL_HTTP', GraphqlUtil::Http.new(endpoint: endpoint, headers: headers))
+    base.const_set('GRAPHQL_UTIL_SCHEMA', GraphqlUtil::Schema.new(base::GRAPHQL_UTIL_HTTP, path: base::GRAPHQL_UTIL_SCHEMA_DUMP))
+    base.const_set('GRAPHQL_UTIL_CLIENT', GraphqlUtil::Client.new(schema: base::GRAPHQL_UTIL_SCHEMA.load_schema, execute: base::GRAPHQL_UTIL_HTTP))
     base.extend GraphqlUtilMethods
 
     Dir["#{path}/**/*.graphql"].each do |filename|
       const_name = filename.split('/').last.gsub('.graphql', '')
-      next if defined?(base.const_get(const_name.upcase.to_sym))
+      raise "GraphqlUtil - #{const_name} is already defined, please use a different filename." if (base.const_get(const_name.upcase.to_sym).present? rescue false)
 
-      base.const_set(const_name.upcase, base::CLIENT.parse(File.open(filename).read))
+      base.const_set(const_name.upcase, base::GRAPHQL_UTIL_CLIENT.parse(File.open(filename).read))
       base.define_singleton_method(const_name.downcase.to_sym) do |variables = {}|
         base.query(base.const_get(const_name.upcase.to_sym), variables: variables)
       end
@@ -55,7 +55,7 @@ module GraphqlUtil
     # @return [Monad] Succes(:data) / Failure(:messages, :problems)
     #
     def query(query, variables: {})
-      self::CLIENT.query(query, variables: variables)
+      self::GRAPHQL_UTIL_CLIENT.query(query, variables: variables)
     end
   end
 end
