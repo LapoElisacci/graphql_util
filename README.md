@@ -26,7 +26,7 @@ Or install it yourself as:
 Define a GraphQL client class, like so:
 
 ```Ruby
-  class MyClient
+  class Client
     GraphqlUtil.act_as_graphql_client(
       self, # Required
       endpoint: 'https://api.github.com/graphql', # Required
@@ -43,26 +43,42 @@ The `act_as_graphql_client` method accepts the following parameters:
 3. `path`, which has to be the location where to store operations files and the Schema dump. (`__dir__` is the suggested one, but any valid path will do);
 4. `headers`, a Hash of headers to be attached to any performed HTTP request.
 
-As the class gets loaded, an Introspection Query request will get performed to the GraphQL endpoint in order to dump the API Schema.
+### Schema
+
+The very first time the Client class loads, an Introspection Query will be performed agains the GraphQL endpoint to dump the relative Schema.
 You'll find your `schema.json` dump file under the above mentioned `path`.
 
-To define queries and mutation, under the same location of your schema, create a folder named `queries`.
-Any `.graphql` file listed under the `queries` folder will generate a class method inside your Client to perform the relative operation.
+(Remember that the Graphql Schema may change over time, therefore whenever you need to update the dump, simply delete the file. The new version will get created later.)
 
-### Example
+### Queries and Mutations
 
-Let's take the following files structure as example:
+The Graphql operations you want your client to perform must be defined inside `.graphql` files under any `dir` subdirectory.
 
-```code
-  path_to_graphql_client
-  ├── queries
-  │   └── user_info.graphql
-  ├── my_client.rb
-  └── schema.json
+### Example and Best practise
+
+Let's take the Github Graphql API as an example.
+
+1. First we create a directory (a Ruby module) named `github` to contain all the necessary code.
+2. We then create a file called `client.rb` , just like this:
+
+```Ruby
+  module Github
+    class Client
+      GraphqlUtil.act_as_graphql_client(
+        self,
+        endpoint: 'https://api.github.com/graphql',
+        path: __dir__,
+        headers: { # You can place any HTTP Header here
+          'Authorization': GITHUB_TOKEN
+        }
+      )
+    end
+  end
 ```
 
-Where `my_client.rb` is the GraphQL Client class defined as above, `schema.json` is the GraphQL API Schema dump and `user_info.graphql` is a GraphQL query like this:
+3. Now we need to define our Queries / Mutations, to do so, place each operation definition under one (or many) subdirectory(ies), like this:
 
+`github/queries/user_info.graphql`
 ```GraphQL
   query userInfo($username: String!) {
     user(login: $username) {
@@ -73,15 +89,55 @@ Where `my_client.rb` is the GraphQL Client class defined as above, `schema.json`
   }
 ```
 
-Now that we've defined our first GraphQL query, the Client will automagically implement a method to perform such operation.
-The method name will be the same as the filename, so if our file's named `user_info.graphql` the relative method will be `user_info`.
+or
 
-Each method will accept arguments as GraphQL variables.
+`github/mutations/add_comment.graphql`
+```GraphQL
+  mutation addComment($input: AddCommentInput!) {
+    clientMutaitonId
+  }
+```
 
-### Example
+4. Now we have a file structure that looks like this:
+
+```Code
+  github
+  ├── queries
+  │   └── user_info.graphql
+  ├── mutations
+  │   └── add_comment.graphql
+  ├── client.rb
+  └── schema.json
+```
+
+5. Each defined operation generates a class method inside our client to perform the relative request. In our example `.user_info` & `.add_comment`.
+6. Each defined method will accept arguments to be passed as variables.
 
 ```Ruby
-  result = MyClient.user_info(username: 'LapoElisacci' )
+Github::Client.user_info(username: 'LapoElisacci')
+```
+
+or
+
+```Ruby
+Github::Client.add_comment(input: { body: 'This gem is awesome!', subjectId: '12345678' })
+```
+
+## Constraints
+
+The client Class as well as the sudirectories names are up to you, but only one level nesting is allowed.
+Something like `anywhere/anything/whatever/whatever.graphql` won't produce the relative method, but `anywhere/anything/whatever.graphql` will, as long as `anywhere/whatever.rb` is the class that "act_as_graphql_client".
+
+```Code
+  anywhere
+  ├── anything
+  │   ├── wont_work
+  │   │   └── wont_work.graphql
+  │   └── anything_that_works.graphql
+  ├── anything_2
+  │   └── anything_that_works_too.graphql
+  ├── whatever.rb
+  └── schema.json
 ```
 
 You can find more details about the `graphql-client` [here](https://github.com/github/graphql-client)
