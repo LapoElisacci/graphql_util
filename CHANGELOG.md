@@ -1,8 +1,7 @@
 # Changelog
 
-## [0.1.2] - 2021-11-16
+## [0.1.0] - 2021-12-29
 
-### Fixed
+### Added
 
-- Methods and Gem documentation
-- General optimization
+- First release
