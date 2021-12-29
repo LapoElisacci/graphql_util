@@ -1,18 +1,17 @@
 PATH
   remote: .
   specs:
-    graphql_util (0.1.1)
+    graphql_util (0.1.2)
       graphql-client (~> 0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.4.1)
+    activesupport (7.0.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     byebug (11.1.3)
@@ -20,14 +19,14 @@ GEM
     crack (0.4.5)
       rexml
     diff-lcs (1.4.4)
-    graphql (1.12.19)
+    graphql (1.13.2)
     graphql-client (0.17.0)
       activesupport (>= 3.0)
       graphql (~> 1.10)
     hashdiff (1.0.1)
     i18n (1.8.11)
       concurrent-ruby (~> 1.0)
-    minitest (5.14.4)
+    minitest (5.15.0)
     public_suffix (4.0.6)
     rake (12.3.3)
     rexml (3.2.5)
@@ -51,7 +50,6 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    zeitwerk (2.5.1)
 
 PLATFORMS
   ruby
